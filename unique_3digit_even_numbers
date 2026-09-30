@@ -1,0 +1,31 @@
+#type: ignore
+
+class Solution:
+    def power_set(self, s: list[int]) -> list[list[int]]:
+        if not s:
+            return [[]]
+        recursive: list[list[int]] = self.power_set(s[:-1])
+        return recursive + [e + [s[-1]] for e in recursive]
+    
+    def combinations(self, s: list[int], k: int) -> list[list[int]]:
+        return [t for t in self.power_set(s) if len(t) == k]
+
+    def insert(self, x: T, s: list[int], i:int) -> list[int]:
+        return s[:i] + [x] + s[i:]
+
+    def insert_everywhere(self, x: T, s: list[int]) -> list[list[int]]:
+        return [self.insert(x, s, i) for i in range(len(s) + 1)]    
+
+    def permute(self, s: list[int]) -> list[list[int]]:
+        if not s:
+            return [[]]
+        return sum([self.insert_everywhere(s[-1], e) for e in self.permute(s[:-1])], []) 
+
+    def permutations(self, s: list[int], k: int) -> list[list[int]]:
+        return sum([self.permute(e) for e in self.combinations(s, k)], [])
+
+    def totalNumbers(self, digits: List[int]) -> int:
+        perm = self.permutations(digits, 3)
+        result = map(lambda x: int("".join(map(str,x))), perm)
+        final = [x for x in result if (x % 2 == 0) and len(str(x)) == 3]
+        return len(set(list(final)))
